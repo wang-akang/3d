@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D 模型展示 - 修复色彩版</title>
+    <title>3D 模型展示</title>
     <style>
         body { margin: 0; background-color: #f0f0f0; }
         model-viewer {
             width: 100%;
             height: 100vh;
-            background-color: #ffffff; /* 改为白色背景，更显色 */
+            background-color: #ffffff;
             --poster-color: transparent;
         }
         .controls {
@@ -29,13 +29,6 @@
 </head>
 <body>
 
-    <!-- 
-        关键修改说明：
-        1. environment-image="neutral"：提供标准环境光
-        2. exposure="2"：大幅提升亮度，解决灰色问题
-        3. tone-mapping="commerce"：使用商业渲染模式，色彩更鲜艳
-        4. shadow-intensity="1"：适度的阴影增加立体感
-    -->
     <model-viewer 
         src="a.glb" 
         alt="Bee 3D Model" 
@@ -45,7 +38,7 @@
         ar-modes="webxr scene-viewer quick-look"
         
         environment-image="neutral" 
-        exposure="2" 
+        exposure="1" 
         tone-mapping="commerce"
         shadow-intensity="1" 
         shadow-softness="1"
@@ -54,7 +47,7 @@
         loading="eager">
         
         <div slot="poster" style="display: flex; justify-content: center; align-items: center; height: 100%; font-family: sans-serif;">
-            <p>正在加载彩色 3D 模型...</p>
+            <p>正在加载 3D 模型...</p>
         </div>
     </model-viewer>
 
@@ -62,8 +55,9 @@
         左键旋转 · 滚轮缩放 · 右键平移
     </div>
 
-    <!-- 使用官方最新版脚本 -->
+
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 </body>
 </html>
+
 
