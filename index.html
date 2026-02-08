@@ -3,59 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D 模型展示</title>
+    <title>3D 模型展示 - 修复色彩版</title>
     <style>
         body { margin: 0; background-color: #f0f0f0; }
-        /* 设置模型展示区域的大小 */
         model-viewer {
             width: 100%;
             height: 100vh;
-            background-color: #eeeeee;
-            --poster-color: transparent; /* 消除加载前的底色 */
+            background-color: #ffffff; /* 改为白色背景，更显色 */
+            --poster-color: transparent;
         }
         .controls {
             position: absolute;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.8);
-            padding: 10px 20px;
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 25px;
+            border-radius: 30px;
             font-family: sans-serif;
-            pointer-events: none; /* 防止遮挡点击 */
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            pointer-events: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 10;
         }
     </style>
 </head>
 <body>
 
-    <!-- 核心组件 -->
-    <!-- environment-image: 增加环境反射，解决颜色灰暗问题 -->
-    <!-- exposure: 控制亮度，1.2 比较明亮 -->
+    <!-- 
+        关键修改说明：
+        1. environment-image="neutral"：提供标准环境光
+        2. exposure="2"：大幅提升亮度，解决灰色问题
+        3. tone-mapping="commerce"：使用商业渲染模式，色彩更鲜艳
+        4. shadow-intensity="1"：适度的阴影增加立体感
+    -->
     <model-viewer 
         src="Bee.glb" 
-        alt="一个3D模型" 
+        alt="Bee 3D Model" 
         auto-rotate 
         camera-controls 
         ar 
         ar-modes="webxr scene-viewer quick-look"
-        shadow-intensity="1.5"
-        shadow-softness="1"
-        exposure="1.2"
-        environment-image="neutral"
-        interpolation-decay="200">
         
-        <!-- 加载状态提示（可选） -->
-        <div slot="poster" style="display: flex; justify-content: center; align-items: center; height: 100%;">
-            <p>正在加载 3D 模型...</p>
+        environment-image="neutral" 
+        exposure="2" 
+        tone-mapping="commerce"
+        shadow-intensity="1" 
+        shadow-softness="1"
+        
+        interpolation-decay="200"
+        loading="eager">
+        
+        <div slot="poster" style="display: flex; justify-content: center; align-items: center; height: 100%; font-family: sans-serif;">
+            <p>正在加载彩色 3D 模型...</p>
         </div>
     </model-viewer>
 
     <div class="controls">
-        鼠标左键旋转，滚轮缩放
+        左键旋转 · 滚轮缩放 · 右键平移
     </div>
 
-    <!-- 引入 model-viewer 脚本 (使用官方推荐的 CDN) -->
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <!-- 使用官方最新版脚本 -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 </body>
 </html>
