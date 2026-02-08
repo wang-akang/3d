@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D 模型展示</title>
+    <style>
+        body { margin: 0; background-color: #f0f0f0; }
+        /* 设置模型展示区域的大小 */
+        model-viewer {
+            width: 100%;
+            height: 100vh;
+            background-color: #eeeeee;
+        }
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 核心组件 -->
+    <!-- src 指向你的文件 ./a.jlb -->
+    <!-- auto-rotate: 自动旋转 | camera-controls: 允许用户缩放旋转 | ar: 支持增强现实 -->
+    <model-viewer 
+        src="a.glb" 
+        alt="一个3D模型" 
+        auto-rotate 
+        camera-controls 
+        ar 
+        shadow-intensity="1"
+        exposure="1">
+    </model-viewer>
+
+    <div class="controls">
+        鼠标左键旋转，滚轮缩放
+    </div>
+
+    <!-- 引入 model-viewer 脚本 -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+</body>
+</html>
