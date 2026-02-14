@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>展示 - 3D Viewer</title>
+    <script type="text/javascript" src="js/util.js"></script>
+    <script type="text/javascript" src="js/enable-threads.js"></script>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "./lib/three.module.js",
+                "gaussian-splats-3d": "./lib/gaussian-splats-3d.module.js"
+            }
+        }
+    </script>
+
+    <style>
+        html, body { height: 100%; margin: 0; font-family: 'Inter', system-ui, sans-serif; background: #000; }
+        #viewer { position: fixed; inset: 0; width: 100%; height: 100%; }
+        #viewer canvas { width: 100% !important; height: 100% !important; display: block; }
+        .back-btn {
+            position: fixed; left: 18px; top: 18px; z-index: 3000;
+            padding: 10px 14px; border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.08);
+            background: rgba(255,255,255,0.92);
+            box-shadow: 0 6px 18px rgba(2,6,23,0.08);
+            cursor: pointer; backdrop-filter: blur(6px);
+        }
+    </style>
+</head>
+<body>
+    <button id="back" class="back-btn">← 返回展厅</button>
+    <div id="viewer"></div>
+
+    <script type="module">
+        import * as GaussianSplats3D from 'gaussian-splats-3d';
+        import * as THREE from 'three';
+
+        // 模型列表
+        const models = [
+            { id: 0, name: '花束场景', url: './flower_cloud.ksplat' },
+            { id: 1, name: '蝴蝶场景', url: './hudie_cloud.ksplat' }
+        ];
+
+        // 获取 URL 参数
+        function getQueryParam(name) {
+            return new URLSearchParams(window.location.search).get(name);
+        }
+
+        const modelIndex = parseInt(getQueryParam('model') || '0', 10);
+        const model = models[modelIndex] || models[0];
+
+        // 容器
+        const container = document.getElementById('viewer');
+
+        // 创建外部 Three 渲染器
+        const renderer = new THREE.WebGLRenderer({ antialias: false });
+        renderer.setPixelRatio(window.devicePixelRatio || 1);
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
+        // 使画布可聚焦，并在左键单击时聚焦，以便接收键盘事件
+        renderer.domElement.tabIndex = 0;
+        renderer.domElement.style.outline = 'none';
+        renderer.domElement.addEventListener('mousedown', (e) => {
+            if (e.button === 0) renderer.domElement.focus();
+        });
+
+        // 场景与相机
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(65, container.clientWidth / container.clientHeight, 0.1, 500);
+        camera.position.set(-1, -4, 6);
+        camera.lookAt(0, 4, 0);
+        camera.up.set(0, -1, -0.6).normalize();
+
+        // 阻尼轨道控制（丝滑滑动关键）
+        const controls = new GaussianSplats3D.OrbitControls(camera, renderer.domElement);
+        controls.rotateSpeed = 0.3;
+        controls.maxPolarAngle = Math.PI * 0.75;
+        controls.minPolarAngle = 0.01;
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.035;
+
+        // 使用 RenderableViewer 加载 splat 场景
+        // 必须先添加到 scene，这样 onBeforeRender 才能在渲染时将 renderer/camera 传给内部 Viewer
+        const renderableViewer = new GaussianSplats3D.RenderableViewer();
+        scene.add(renderableViewer);
+        renderableViewer.addScenesFromFiles([{ path: model.url }], true)
+            .catch(err => console.error('加载模型失败:', err));
+
+        // 窗口大小调整
+        window.addEventListener('resize', () => {
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+        });
+
+        // 渲染循环：每帧 controls.update() 应用阻尼插值
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // 返回展厅
+        document.getElementById('back').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
