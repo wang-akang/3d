@@ -391,6 +391,12 @@
             
             cleanupResources();
 
+            // 先显示详情页容器，这样 container 才有尺寸
+            const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+            if (scrollBarWidth > 0) document.body.style.paddingRight = scrollBarWidth + 'px';
+            document.body.classList.add('no-scroll');
+            document.getElementById('detail-view').classList.add('active');
+
             renderer = new THREE.WebGLRenderer({ antialias: false });
             renderer.setPixelRatio(window.devicePixelRatio || 1);
             renderer.setSize(container.clientWidth, container.clientHeight);
@@ -502,17 +508,10 @@
             }
             animate();
 
-            // Prevent layout shift when scrollbar disappears by compensating body padding
-            const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
-            if (scrollBarWidth > 0) document.body.style.paddingRight = scrollBarWidth + 'px';
-            document.body.classList.add('no-scroll');
-            document.getElementById('detail-view').classList.add('active');
-
             // Animate inner content in
             const detailInner = document.getElementById('detail-inner');
             if (detailInner) {
                 detailInner.classList.remove('closing');
-                // force reflow
                 void detailInner.offsetWidth;
                 requestAnimationFrame(() => detailInner.classList.add('open'));
             }
