@@ -28,6 +28,19 @@
             --border: #e2e8f0;
         }
 
+        html {
+            overflow-y: scroll; /* 始终保留滚动条空间，防止布局抖动 */
+        }
+
+        /* 当详情页打开时，视觉上隐藏滚动条但保留轨道宽度，避免布局变化 */
+        html.hide-scrollbar {
+            scrollbar-width: none; /* Firefox */
+        }
+        html.hide-scrollbar::-webkit-scrollbar {
+            width: 0; /* Chrome/Safari */
+            height: 0;
+        }
+
         body {
             margin: 0;
             font-family: 'Inter', 'Microsoft YaHei', system-ui, sans-serif;
@@ -191,9 +204,11 @@
             display: block;
         }
 
-        /* Disable page scroll when showing full-screen detail view */
+        /* 锁定滚动：用 position:fixed 冻结页面，不会移除滚动条 */
         body.no-scroll {
-            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            left: 0;
         }
 
         #main-viewer {
@@ -391,10 +406,13 @@
             
             cleanupResources();
 
-            // 先显示详情页容器，这样 container 才有尺寸
-            const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
-            if (scrollBarWidth > 0) document.body.style.paddingRight = scrollBarWidth + 'px';
+            // 先锁定滚动，记住当前滚动位置
+            const scrollY = window.scrollY;
+            document.body.style.top = `-${scrollY}px`;
+            document.body.dataset.scrollY = scrollY;
             document.body.classList.add('no-scroll');
+            // 隐藏视觉上的滚动条（但保留轨道宽度以避免布局抖动）
+            document.documentElement.classList.add('hide-scrollbar');
             document.getElementById('detail-view').classList.add('active');
 
             renderer = new THREE.WebGLRenderer({ antialias: false });
@@ -518,27 +536,26 @@
         }
 
         function hideDetail() {
+            // 清理 3D 资源
+            cleanupResources();
+
+            // 重置 detail-inner 状态
             const detailInner = document.getElementById('detail-inner');
             if (detailInner) {
                 detailInner.classList.remove('open');
-                detailInner.classList.add('closing');
-                // wait for animation to finish
-                const onEnd = () => {
-                    detailInner.removeEventListener('transitionend', onEnd);
-                    document.getElementById('detail-view').classList.remove('active');
-                    document.body.classList.remove('no-scroll');
-                    document.body.style.paddingRight = '';
-                    cleanupResources();
-                };
-                detailInner.addEventListener('transitionend', onEnd);
-                // fallback in case transitionend doesn't fire
-                setTimeout(onEnd, 380);
-            } else {
-                document.getElementById('detail-view').classList.remove('active');
-                document.body.classList.remove('no-scroll');
-                document.body.style.paddingRight = '';
-                cleanupResources();
+                detailInner.classList.remove('closing');
             }
+
+            // 隐藏详情页
+            document.getElementById('detail-view').classList.remove('active');
+
+            // 恢复滚动：先取消 fixed 定位，再恢复滚动位置
+            const scrollY = parseInt(document.body.dataset.scrollY || '0');
+            document.body.classList.remove('no-scroll');
+            // 恢复视觉滚动条显示
+            document.documentElement.classList.remove('hide-scrollbar');
+            document.body.style.top = '';
+            window.scrollTo(0, scrollY);
         }
 
         function initGrid() {
