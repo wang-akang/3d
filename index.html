@@ -202,6 +202,26 @@
             background: #000000;
         }
 
+        /* 内部动画容器：淡入上浮 */
+        .detail-inner {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transform: translateY(12px) scale(0.998);
+            transition: opacity 320ms cubic-bezier(.2,.8,.2,1), transform 320ms cubic-bezier(.2,.8,.2,1);
+            will-change: opacity, transform;
+        }
+
+        .detail-inner.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .detail-inner.closing {
+            opacity: 0;
+            transform: translateY(12px) scale(0.998);
+        }
+
         .back-btn {
             position: fixed;
             left: 22px;
@@ -265,8 +285,10 @@
 
     <!-- 详情页：全屏 3D 查看器 -->
     <div id="detail-view">
-        <button class="back-btn" id="back-btn">← 返回展厅</button>
-        <div id="main-viewer"></div>
+        <div id="detail-inner" class="detail-inner">
+            <button class="back-btn" id="back-btn">← 返回展厅</button>
+            <div id="main-viewer"></div>
+        </div>
     </div>
 
     <script type="module">
@@ -286,7 +308,42 @@
                 url: "./hudie_cloud.ksplat",
                 image: "./image/hudie.png"
             },
-
+            {
+                name: "城市夜景",
+                category: "城市 / 夜景",
+                url: "./city_night_cloud.ksplat",
+                
+            },
+            {
+                name: "抽象艺术",
+                category: "抽象 / 艺术",
+                url: "./abstract_art_cloud.ksplat",
+               
+            },
+                {
+                    name: "太空星云",
+                    category: "宇宙 / 天体",
+                    url: "./space_nebula_cloud.ksplat",
+                    
+                },
+                {
+                    name: "海底世界",
+                    category: "自然 / 海洋",
+                    url: "./underwater_world_cloud.ksplat",
+                    
+                },
+                    {
+                        name: "机械零件",
+                        category: "工业 / 机械",
+                        url: "./mechanical_parts_cloud.ksplat",
+                        
+                    },
+                    {
+                        name: "幻想生物",
+                        category: "幻想 / 生物",
+                        url: "./fantasy_creature_cloud.ksplat",
+                        
+                    }
         ];
 
         let renderer, scene, camera, controls, renderableViewer, animationId, resizeHandler, clickHandler;
@@ -445,14 +502,44 @@
             }
             animate();
 
+            // Prevent layout shift when scrollbar disappears by compensating body padding
+            const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+            if (scrollBarWidth > 0) document.body.style.paddingRight = scrollBarWidth + 'px';
             document.body.classList.add('no-scroll');
             document.getElementById('detail-view').classList.add('active');
+
+            // Animate inner content in
+            const detailInner = document.getElementById('detail-inner');
+            if (detailInner) {
+                detailInner.classList.remove('closing');
+                // force reflow
+                void detailInner.offsetWidth;
+                requestAnimationFrame(() => detailInner.classList.add('open'));
+            }
         }
 
         function hideDetail() {
-            document.getElementById('detail-view').classList.remove('active');
-            document.body.classList.remove('no-scroll');
-            cleanupResources();
+            const detailInner = document.getElementById('detail-inner');
+            if (detailInner) {
+                detailInner.classList.remove('open');
+                detailInner.classList.add('closing');
+                // wait for animation to finish
+                const onEnd = () => {
+                    detailInner.removeEventListener('transitionend', onEnd);
+                    document.getElementById('detail-view').classList.remove('active');
+                    document.body.classList.remove('no-scroll');
+                    document.body.style.paddingRight = '';
+                    cleanupResources();
+                };
+                detailInner.addEventListener('transitionend', onEnd);
+                // fallback in case transitionend doesn't fire
+                setTimeout(onEnd, 380);
+            } else {
+                document.getElementById('detail-view').classList.remove('active');
+                document.body.classList.remove('no-scroll');
+                document.body.style.paddingRight = '';
+                cleanupResources();
+            }
         }
 
         function initGrid() {
