@@ -184,16 +184,11 @@
             inset: 0;
             background: #000000;
             z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            display: none;
         }
 
         #detail-view.active {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
+            display: block;
         }
 
         /* Disable page scroll when showing full-screen detail view */
@@ -291,7 +286,7 @@
                 url: "./hudie_cloud.ksplat",
                 image: "./image/hudie.png"
             },
-        
+
         ];
 
         let renderer, scene, camera, controls, renderableViewer, animationId, resizeHandler, clickHandler;
@@ -450,8 +445,8 @@
             }
             animate();
 
-            document.getElementById('detail-view').classList.add('active');
             document.body.classList.add('no-scroll');
+            document.getElementById('detail-view').classList.add('active');
         }
 
         function hideDetail() {
@@ -495,4 +490,3 @@
     </script>
 </body>
 </html>
-
