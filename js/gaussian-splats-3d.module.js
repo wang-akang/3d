@@ -2445,52 +2445,104 @@ class LoadingSpinner {
         style.innerHTML = `
 
             .message {
-                font-family: arial;
-                font-size: 12pt;
-                color: #ffffff;
+                font-family: 'Inter', 'Microsoft YaHei', system-ui, sans-serif;
+                font-size: 13pt;
+                color: rgba(255,255,255,0.85);
                 text-align: center;
-                padding-top:15px;
-                width: 180px;
+                padding-top: 28px;
+                width: 220px;
+                letter-spacing: 1.5px;
+                animation: msgFade 1.8s ease-in-out infinite alternate;
+            }
+
+            @keyframes msgFade {
+                0%   { opacity: 0.5; }
+                100% { opacity: 1; }
             }
 
             .outerContainer {
                 width: 100%;
                 height: 100%;
+                background: radial-gradient(ellipse at center, rgba(10,10,30,0.95) 0%, rgba(0,0,0,0.98) 100%);
             }
 
             .container {
                 position: absolute;
                 top: 50%;
                 left: 50%;
-                transform: translate(-80px, -80px);
-                width: 180px;
+                transform: translate(-50%, -50%);
+                width: 220px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
 
             .loader {
-                width: 120px;        /* the size */
-                padding: 15px;       /* the border thickness */
-                background: #07e8d6; /* the color */
-                z-index:99999;
-            
-                aspect-ratio: 1;
-                border-radius: 50%;
-                --_m: 
-                    conic-gradient(#0000,#000),
-                    linear-gradient(#000 0 0) content-box;
-                -webkit-mask: var(--_m);
-                    mask: var(--_m);
-                -webkit-mask-composite: source-out;
-                    mask-composite: subtract;
-                box-sizing: border-box;
-                animation: load 1s linear infinite;
-                margin-left: 30px;
+                width: 90px;
+                height: 90px;
+                position: relative;
+                z-index: 99999;
             }
-            
-            @keyframes load {
-                to{transform: rotate(1turn)}
+
+            .loader::before,
+            .loader::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: 50%;
+                border: 3px solid transparent;
+            }
+
+            .loader::before {
+                border-top-color: #a78bfa;
+                border-right-color: #7c3aed;
+                animation: spinA 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+                filter: drop-shadow(0 0 6px rgba(167,139,250,0.6));
+            }
+
+            .loader::after {
+                inset: 8px;
+                border-bottom-color: #38bdf8;
+                border-left-color: #06b6d4;
+                animation: spinB 1.6s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+                filter: drop-shadow(0 0 6px rgba(56,189,248,0.5));
+            }
+
+            .loader-dot {
+                position: absolute;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #c4b5fd;
+                box-shadow: 0 0 14px 4px rgba(196,181,253,0.5);
+                animation: dotPulse 1.4s ease-in-out infinite;
+            }
+
+            @keyframes spinA {
+                0%   { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            @keyframes spinB {
+                0%   { transform: rotate(0deg); }
+                100% { transform: rotate(-360deg); }
+            }
+
+            @keyframes dotPulse {
+                0%, 100% { transform: translate(-50%, -50%) scale(1);   opacity: 0.7; }
+                50%      { transform: translate(-50%, -50%) scale(1.6); opacity: 1; }
             }
 
         `;
+
+        // Add inner dot element
+        const dotDiv = document.createElement('div');
+        dotDiv.className = 'loader-dot';
+        this.spinnerDiv.appendChild(dotDiv);
+
         this.spinnerDivContainerOuter.appendChild(style);
     }
 
