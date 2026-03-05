@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <script src="coi-serviceworker.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>MetaV 3D 数字艺术馆</title>
-    
+
     <script type="importmap">
         {
             "imports": {
@@ -29,15 +30,19 @@
         }
 
         html {
-            overflow-y: scroll; /* 始终保留滚动条空间，防止布局抖动 */
+            overflow-y: scroll;
+            /* 始终保留滚动条空间，防止布局抖动 */
         }
 
         /* 当详情页打开时，视觉上隐藏滚动条但保留轨道宽度，避免布局变化 */
         html.hide-scrollbar {
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none;
+            /* Firefox */
         }
+
         html.hide-scrollbar::-webkit-scrollbar {
-            width: 0; /* Chrome/Safari */
+            width: 0;
+            /* Chrome/Safari */
             height: 0;
         }
 
@@ -53,19 +58,20 @@
             padding: 0 3%;
             height: 80px;
             display: flex;
-            justify-content: space-between; 
+            justify-content: space-between;
             align-items: center;
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
-            box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
         .logo-text {
-            font-size: 24px; /* 略微调大 */
+            font-size: 24px;
+            /* 略微调大 */
             font-weight: 900;
             letter-spacing: 2px;
             cursor: pointer;
@@ -73,31 +79,39 @@
             -webkit-user-select: none;
 
             /* 1. 多色炫彩渐变：包含紫色、蓝色、青色、紫色 */
-            background: linear-gradient(
-                45deg, 
-                #ff00cc, 
-                #3333ff, 
-                #00ccff, 
-                #3333ff, 
-                #ff00cc
-            );
-            background-size: 300% 300%; /* 扩大背景尺寸让色彩过渡更丝滑 */
+            background: linear-gradient(45deg,
+                    #ff00cc,
+                    #3333ff,
+                    #00ccff,
+                    #3333ff,
+                    #ff00cc);
+            background-size: 300% 300%;
+            /* 扩大背景尺寸让色彩过渡更丝滑 */
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
 
             /* 2. 组合动画：流光 + 呼吸缩放 */
-            animation: 
+            animation:
                 rainbow-flow 5s ease infinite,
                 gentle-pulse 2s ease-in-out infinite;
-            
-            display: inline-block; /* 必须设置此项，缩放动画才生效 */
+
+            display: inline-block;
+            /* 必须设置此项，缩放动画才生效 */
         }
 
         /* 炫彩流光动画：让颜色斜向流动 */
         @keyframes rainbow-flow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
 
@@ -108,9 +122,9 @@
         }
 
         .container {
-            max-width: 1600px;
+            max-width: 2600px;
             margin: 0 auto;
-            padding: 30px 40px 24px;
+            padding: 60px 40px 24px;
             box-sizing: border-box;
         }
 
@@ -122,10 +136,10 @@
         }
 
         .card {
-            flex: 0 0 calc(25% - 18px);
+            flex: 0 0 calc(20% - 20px);
             box-sizing: border-box;
             background: var(--card-bg);
-            border: 1px solid rgba(16,24,40,0.06);
+            border: 1px solid rgba(16, 24, 40, 0.06);
             cursor: pointer;
             transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
         }
@@ -138,7 +152,7 @@
 
         .card-preview {
             width: 100%;
-            height: 200px;
+            height: 300px;
             background: radial-gradient(#ffffff, #f1f5f9);
             overflow: hidden;
             display: flex;
@@ -157,7 +171,7 @@
             padding: 18px 22px 22px 22px;
             font-size: 14px;
             line-height: 1.6;
-            border-top: 1px solid rgba(16,24,40,0.04);
+            border-top: 1px solid rgba(16, 24, 40, 0.04);
         }
 
         .card-tag {
@@ -178,18 +192,36 @@
         }
 
         @media (max-width: 1100px) {
-            .card { flex: 0 0 calc(33.333% - 16px); max-width: 340px; }
-            .card-preview { height: 180px; }
+            .card {
+                flex: 0 0 calc(33.333% - 16px);
+                max-width: 340px;
+            }
+
+            .card-preview {
+                height: 180px;
+            }
         }
 
         @media (max-width: 820px) {
-            .card { flex: 0 0 calc(50% - 12px); max-width: 520px; }
-            .card-preview { height: 180px; }
+            .card {
+                flex: 0 0 calc(50% - 12px);
+                max-width: 520px;
+            }
+
+            .card-preview {
+                height: 180px;
+            }
         }
 
         @media (max-width: 480px) {
-            .card { flex: 0 0 100%; max-width: 100%; }
-            .card-preview { height: 160px; }
+            .card {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+
+            .card-preview {
+                height: 160px;
+            }
         }
 
         #detail-view {
@@ -223,7 +255,7 @@
             inset: 0;
             opacity: 0;
             transform: translateY(12px) scale(0.998);
-            transition: opacity 320ms cubic-bezier(.2,.8,.2,1), transform 320ms cubic-bezier(.2,.8,.2,1);
+            transition: opacity 320ms cubic-bezier(.2, .8, .2, 1), transform 320ms cubic-bezier(.2, .8, .2, 1);
             will-change: opacity, transform;
         }
 
@@ -244,18 +276,18 @@
             z-index: 3000;
             padding: 10px 18px;
             border-radius: 5px;
-            background: rgba(255,255,255,0.92);
-            border: 1px solid rgba(0,0,0,0.08);
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(0, 0, 0, 0.08);
             cursor: pointer;
-            box-shadow: 0 6px 18px rgba(2,6,23,0.08);
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.08);
             backdrop-filter: blur(6px);
             font-size: 14px;
             font-weight: 600;
         }
 
         .back-btn:hover {
-            background: rgba(255,255,255,1);
-            box-shadow: 0 8px 24px rgba(2,6,23,0.14);
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 8px 24px rgba(2, 6, 23, 0.14);
         }
 
         /* 点击白色圆圈提示 */
@@ -265,30 +297,44 @@
             z-index: 2500;
             width: 40px;
             height: 40px;
-            border: 2px solid rgba(255,255,255,0.9);
+            border: 2px solid rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             transform: translate(-50%, -50%) scale(0.3);
             opacity: 1;
             animation: clickRingAnim 0.6s ease-out forwards;
         }
+
         .click-ring::after {
             content: '';
             position: absolute;
             inset: 6px;
-            border: 1px solid rgba(255,255,255,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 50%;
         }
+
         @keyframes clickRingAnim {
-            0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 1; }
-            50%  { transform: translate(-50%, -50%) scale(1.0); opacity: 0.8; }
-            100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; }
+            0% {
+                transform: translate(-50%, -50%) scale(0.3);
+                opacity: 1;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.0);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1.4);
+                opacity: 0;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <nav>
-         <div class="logo-text" onclick="window.location.href='/'">
+        <div class="logo-text" onclick="window.location.href='/'">
             METAV<span style="margin: 0 2px;">•</span>3D
         </div>
         <img src="image/school.png" alt="云南师范大学信息学院" class="school-logo">
@@ -298,7 +344,7 @@
         <div class="grid" id="model-grid"></div>
     </div>
 
-    <!-- 详情页：全屏 3D 查看器 -->
+
     <div id="detail-view">
         <div id="detail-inner" class="detail-inner">
             <button class="back-btn" id="back-btn">← 返回展厅</button>
@@ -313,118 +359,125 @@
         const models = [
             {
                 name: "花束场景",
-                category: "点云 / 室内",
-                url: "./flower_cloud.ksplat",
+                category: "自然 / 鲜花",
+                url: "/asset/flower.ksplat",
                 image: "./image/flower.png"
             },
             {
                 name: "蝴蝶场景",
-                category: "点云 / 室外",
-                url: "./hudie_cloud.ksplat",
+                category: "景点 / 蝴蝶",
+                url: "/asset/hudie.ksplat",
                 image: "./image/hudie.png"
             },
             {
-                name: "城市夜景",
-                category: "城市 / 夜景",
-                url: "./city_night_cloud.ksplat",
-                
+                name: "牡丹亭剧装",
+                category: "艺术 / 戏剧",
+                url: "/asset/mdt.ksplat",
+                image: "./image/mdt.png"
+
             },
             {
-                name: "抽象艺术",
-                category: "抽象 / 艺术",
-                url: "./abstract_art_cloud.ksplat",
-               
+                name: "掐丝珐琅鎏金太平有象熏炉",
+                category: "文物 / 熏炉",
+                url: "/asset/xl.ksplat",
+                image: "./image/xl.png"
+
             },
-                {
-                    name: "太空星云",
-                    category: "宇宙 / 天体",
-                    url: "./space_nebula_cloud.ksplat",
-                    
-                },
-                {
-                    name: "海底世界",
-                    category: "自然 / 海洋",
-                    url: "./underwater_world_cloud.ksplat",
-                    
-                },
-                    {
-                        name: "机械零件",
-                        category: "工业 / 机械",
-                        url: "./mechanical_parts_cloud.ksplat",
-                        
-                    },
-                    {
-                        name: "幻想生物",
-                        category: "幻想 / 生物",
-                        url: "./fantasy_creature_cloud.ksplat",
-                        
-                    }
+            {
+                name: "海底世界",
+                category: "自然 / 海洋",
+                url: "/asset/underwater_world_cloud.ksplat",
+
+            },
+            {
+                name: "机械零件",
+                category: "工业 / 机械",
+                url: "/asset/mechanical_parts_cloud.ksplat",
+
+            },
+            {
+                name: "幻想生物",
+                category: "幻想 / 生物",
+                url: "/asset/fantasy_creature_cloud.ksplat",
+
+            }
         ];
 
-        let renderer, scene, camera, controls, renderableViewer, animationId, resizeHandler, clickHandler;
+        let renderer, scene, camera, controls, renderableViewer, animationId, resizeHandler, clickHandler, wheelHandler, zoomAnimationId;
 
         function cleanupResources() {
             if (animationId) {
                 cancelAnimationFrame(animationId);
                 animationId = null;
             }
-            
+
             if (resizeHandler) {
                 window.removeEventListener('resize', resizeHandler);
                 resizeHandler = null;
             }
-            
+
             if (clickHandler) {
                 const container = document.getElementById('main-viewer');
                 container.removeEventListener('click', clickHandler);
                 clickHandler = null;
             }
-            
+
+            if (wheelHandler) {
+                const container = document.getElementById('main-viewer');
+                container.removeEventListener('wheel', wheelHandler, { passive: false });
+                wheelHandler = null;
+            }
+
+            if (zoomAnimationId) {
+                cancelAnimationFrame(zoomAnimationId);
+                zoomAnimationId = null;
+            }
+
             if (renderableViewer && scene) {
                 scene.remove(renderableViewer);
                 renderableViewer = null;
             }
-            
+
             if (controls) {
                 controls.dispose();
                 controls = null;
             }
-            
+
             if (renderer) {
                 const container = document.getElementById('main-viewer');
                 container.innerHTML = '';
                 renderer.dispose();
                 renderer = null;
             }
-            
+
             scene = null;
             camera = null;
         }
 
         function showDetail(model) {
             const container = document.getElementById('main-viewer');
-            
+
             cleanupResources();
 
-            // 先锁定滚动，记住当前滚动位置
+
             const scrollY = window.scrollY;
             document.body.style.top = `-${scrollY}px`;
             document.body.dataset.scrollY = scrollY;
             document.body.classList.add('no-scroll');
-            // 隐藏视觉上的滚动条（但保留轨道宽度以避免布局抖动）
+
             document.documentElement.classList.add('hide-scrollbar');
             document.getElementById('detail-view').classList.add('active');
 
             renderer = new THREE.WebGLRenderer({ antialias: false });
-            renderer.setPixelRatio(window.devicePixelRatio || 1);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
             renderer.setSize(container.clientWidth, container.clientHeight);
             container.appendChild(renderer.domElement);
 
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(
-                65, 
-                container.clientWidth / container.clientHeight, 
-                0.1, 
+                65,
+                container.clientWidth / container.clientHeight,
+                0.1,
                 500
             );
             camera.position.set(-4, -0.2, -4);
@@ -450,11 +503,10 @@
             };
             window.addEventListener('resize', resizeHandler);
 
-            // 鼠标左键点击设置焦点（OrbitControls 的旋转中心）
-            let mouseDownPos = null;
-            let focusTween = null; // 动画过渡状态
 
-            // 显示白色圆圈点击提示
+            let mouseDownPos = null;
+            let focusTween = null;
+
             function showClickRing(x, y) {
                 const ring = document.createElement('div');
                 ring.className = 'click-ring';
@@ -468,42 +520,41 @@
                 if (e.button === 0) mouseDownPos = { x: e.clientX, y: e.clientY };
             });
             clickHandler = (e) => {
-                // 仅在鼠标未拖拽时触发（区分点击和拖拽）
+
                 if (!mouseDownPos) return;
                 const dx = e.clientX - mouseDownPos.x;
                 const dy = e.clientY - mouseDownPos.y;
                 if (Math.sqrt(dx * dx + dy * dy) > 5) return;
 
-                // 显示白色圆圈提示
                 showClickRing(e.clientX, e.clientY);
 
                 const rect = renderer.domElement.getBoundingClientRect();
                 const ndcX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
                 const ndcY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
-                // 从相机发射射线
+
                 const raycaster = new THREE.Raycaster();
                 raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), camera);
 
-                // 创建一个与相机视线垂直的平面，经过当前焦点
+
                 const cameraDir = new THREE.Vector3();
                 camera.getWorldDirection(cameraDir);
                 const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(cameraDir, controls.target);
 
-                // 计算射线与平面的交点，平滑过渡到新焦点
+
                 const hitPoint = new THREE.Vector3();
                 if (raycaster.ray.intersectPlane(plane, hitPoint)) {
-                    // 平滑动画过渡
+
                     const startTarget = controls.target.clone();
                     const startTime = performance.now();
-                    const duration = 500; // 过渡时长 ms
+                    const duration = 500;
 
-                    // 取消之前的过渡动画
+
                     if (focusTween) cancelAnimationFrame(focusTween);
 
                     function tweenFocus(now) {
                         let t = Math.min((now - startTime) / duration, 1);
-                        // ease-out cubic 缓动
+
                         t = 1 - Math.pow(1 - t, 3);
                         controls.target.lerpVectors(startTarget, hitPoint, t);
                         controls.update();
@@ -519,14 +570,55 @@
             };
             container.addEventListener('click', clickHandler);
 
-            function animate() {
+            // Wheel zoom with inertia/damping: accumulate velocity; apply in main render loop
+            let zoomVelocity = 0; // distance units per second
+            const minDistance = 0.2;
+            const _dir = new THREE.Vector3();
+            const _pos = new THREE.Vector3();
+            let prevTime = performance.now();
+
+            wheelHandler = (e) => {
+                e.preventDefault();
+                const curDist = camera.position.distanceTo(controls.target);
+                const delta = e.deltaY; // positive -> zoom out
+                // Accumulate velocity. Tweak multiplier for sensitivity.
+                // reduce sensitivity for slower, smoother feel
+                const velocityDelta = delta * 0.001 * Math.max(0.6, curDist);
+                zoomVelocity += velocityDelta;
+                // cap velocity to avoid big jumps
+                const maxVel = 8.0;
+                zoomVelocity = Math.max(-maxVel, Math.min(maxVel, zoomVelocity));
+            };
+            container.addEventListener('wheel', wheelHandler, { passive: false });
+
+            function animate(now) {
                 animationId = requestAnimationFrame(animate);
+                // compute dt
+                now = now || performance.now();
+                const dt = Math.min(0.05, (now - prevTime) / 1000);
+                prevTime = now;
+
+                // apply zoom inertia if present
+                if (Math.abs(zoomVelocity) > 1e-6) {
+                    // direction from target to camera
+                    _dir.copy(camera.position).sub(controls.target).normalize();
+                    const curDist2 = camera.position.distanceTo(controls.target);
+                    const newDist = Math.max(minDistance, curDist2 + zoomVelocity * dt);
+                    _pos.copy(controls.target).add(_dir.multiplyScalar(newDist));
+                    camera.position.copy(_pos);
+
+                    // softer damping for a longer, smoother glide
+                    const damping = 4.0;
+                    zoomVelocity *= Math.exp(-damping * dt);
+                    if (Math.abs(zoomVelocity) < 0.0002) zoomVelocity = 0;
+                }
+
                 controls.update();
                 renderer.render(scene, camera);
             }
-            animate();
+            animationId = requestAnimationFrame(animate);
 
-            // Animate inner content in
+
             const detailInner = document.getElementById('detail-inner');
             if (detailInner) {
                 detailInner.classList.remove('closing');
@@ -536,23 +628,22 @@
         }
 
         function hideDetail() {
-            // 清理 3D 资源
+
             cleanupResources();
 
-            // 重置 detail-inner 状态
+
             const detailInner = document.getElementById('detail-inner');
             if (detailInner) {
                 detailInner.classList.remove('open');
                 detailInner.classList.remove('closing');
             }
 
-            // 隐藏详情页
             document.getElementById('detail-view').classList.remove('active');
 
-            // 恢复滚动：先取消 fixed 定位，再恢复滚动位置
+
             const scrollY = parseInt(document.body.dataset.scrollY || '0');
             document.body.classList.remove('no-scroll');
-            // 恢复视觉滚动条显示
+
             document.documentElement.classList.remove('hide-scrollbar');
             document.body.style.top = '';
             window.scrollTo(0, scrollY);
@@ -575,7 +666,7 @@
                         </svg>`;
                     return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
                 })();
-                
+
                 card.innerHTML = `
                     <div class="card-preview"><img src="${thumb}" alt="${model.name}"></div>
                     <div class="card-info">
@@ -592,5 +683,5 @@
         window.addEventListener('load', initGrid);
     </script>
 </body>
-</html>
 
+</html>
